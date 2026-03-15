@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KrishiMitrr — Kisan Ka AI Dost
 
-## Getting Started
+A Next.js agriculture chatbot for Indian farmers. Chat with an AI that helps on crops, irrigation, pests, and more.
 
-First, run the development server:
+## Features
+
+- **WhatsApp-style chat UI** — Clean, mobile-friendly interface
+- **Streaming responses** — Replies stream in real time from the Gemini API
+- **Secure** — API key is only used on the server; never exposed to the browser
+- **Session history** — Conversation is kept in memory for the current session
+- **Mobile responsive** — Works on phones and desktops
+
+## Setup
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Set your API key
+
+Create a file named `.env.local` in the project root.
+
+**Option A — Google AI Studio (ai.google.dev)**  
+Get a key from [Google AI Studio](https://aistudio.google.com/apikey):
+
+```env
+GEMINI_API_KEY=your_key_here
+```
+
+**Option B — Google Cloud (Vertex AI)**  
+If your key is from [Google Cloud](https://console.cloud.google.com/apis/credentials) (Vertex AI / Express mode), use:
+
+```env
+GOOGLE_API_KEY=your_google_cloud_key_here
+GOOGLE_GENAI_USE_VERTEXAI=true
+```
+
+Optional for Vertex (if not using Express mode defaults):
+
+```env
+GOOGLE_CLOUD_PROJECT=your-project-id
+GOOGLE_CLOUD_LOCATION=us-central1
+```
+
+The app supports both: it uses **@google/genai** and switches to Vertex when `GOOGLE_GENAI_USE_VERTEXAI=true`.
+
+### 3. Run locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Build for production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Deploy on Netlify
 
-To learn more about Next.js, take a look at the following resources:
+1. Push the repo to GitHub (or another Git provider).
+2. In Netlify: **Add new site → Import an existing project** and select the repo.
+3. Build settings are read from `netlify.toml` (build command, publish directory, Next.js plugin).
+4. In **Site settings → Environment variables**, add:
+   - Key: `GEMINI_API_KEY`
+   - Value: your Gemini API key
+5. Deploy. The Next.js plugin will run the build and serve the app.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+app/
+  page.tsx           # Main chat UI
+  api/
+    chat/
+      route.ts       # Server-side Gemini API (key never sent to browser)
+components/
+  ChatBox.tsx        # Message list + typing indicator
+  Message.tsx        # Single message bubble
+  InputBar.tsx       # Input field + send button
+```
 
-## Deploy on Vercel
+## Notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `.env.local` is in `.gitignore` — never commit your API key.
+- The bot only answers agriculture-related questions and refuses off-topic ones.
+- Replies follow the user’s language (Hindi / English / Hinglish).
